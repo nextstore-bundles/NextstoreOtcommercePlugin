@@ -1,0 +1,4 @@
+parameters:
+    ot_key: '%env(OT_KEY)%'
+    ot_secret: '%env(OT_SECRET)%'
+    ot_lang: '%env(OT_LANG)%'

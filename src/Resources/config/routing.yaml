@@ -1,0 +1,2 @@
+nextstore_sylius_otcommerce_api:
+    resource: "@NextstoreSyliusOtcommercePlugin/Resources/config/routing/api.yaml"

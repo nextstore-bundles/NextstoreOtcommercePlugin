@@ -1,0 +1,6 @@
+nextstore_sylius_otcommerce_api_add_item_to_cart_by_otcommerce:
+    path: /api/v2/shop/orders/{tokenValue}/items-by-ot
+    methods: [POST]
+    defaults:
+        _controller: nextstore_sylius_otcommerce.controller.add_item_to_cart_by_otcommerce
+        _format: json

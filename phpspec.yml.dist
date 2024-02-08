@@ -1,0 +1,4 @@
+suites:
+    main:
+        namespace: Nextstore\SyliusOtcommercePlugin
+        psr4_prefix: Nextstore\SyliusOtcommercePlugin
