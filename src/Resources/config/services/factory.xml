@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="nextstore_sylius_otcommerce.factory.product"
+            class="Nextstore\SyliusOtcommercePlugin\Factory\Product\ProductFactory"
+            decorates="sylius.factory.product"
+            public="false"
+        >
+            <argument type="service" id="nextstore_sylius_otcommerce.factory.product.inner" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="sylius.context.channel" />
+            <argument type="service" id="nextstore_sylius_otcommerce.service.ot_response" />
+        </service>
+
+        <service id="nextstore_sylius_otcommerce.factory.product_variant"
+            class="Nextstore\SyliusOtcommercePlugin\Factory\Product\VariantFactory"
+            decorates="sylius.factory.product_variant"
+            public="false"
+        >
+            <argument type="service" id="nextstore_sylius_otcommerce.factory.product_variant.inner" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="sylius.context.channel" />
+            <argument type="service" id="nextstore_sylius_otcommerce.service.ot_response" />
+        </service>
+    </services>
+</container>

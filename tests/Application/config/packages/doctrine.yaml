@@ -12,3 +12,15 @@ doctrine:
         charset: UTF8
 
         url: '%env(resolve:DATABASE_URL)%'
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        entity_managers:
+            default:
+                auto_mapping: true
+                mappings:
+                    Tests\Nextstore\SyliusOtcommercePlugin\Application\src:
+                        is_bundle: false
+                        type: annotation
+                        dir: "%kernel.project_dir%/src/Entity"
+                        prefix: 'Tests\Nextstore\SyliusOtcommercePlugin\Application\src\Entity'
+                        alias: Tests\Nextstore\SyliusOtcommercePlugin\Application\src

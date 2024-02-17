@@ -20,3 +20,12 @@ sylius_shop:
 
 sylius_api:
     enabled: true
+
+sylius_product:
+    resources:
+        product:
+            classes:
+                model: Tests\Nextstore\SyliusOtcommercePlugin\Application\src\Entity\Product\Product
+        product_variant:
+            classes:
+                model: Tests\Nextstore\SyliusOtcommercePlugin\Application\src\Entity\Product\ProductVariant

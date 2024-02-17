@@ -9,5 +9,9 @@
             class="Nextstore\SyliusOtcommercePlugin\Service\OtService" public="true">
             <argument type="service" id="Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface" />
         </service>
+
+        <service id="nextstore_sylius_otcommerce.service.ot_response"
+            class="Nextstore\SyliusOtcommercePlugin\Service\OtResponse" public="true">
+        </service>
     </services>
 </container>
