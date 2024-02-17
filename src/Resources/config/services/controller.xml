@@ -10,6 +10,9 @@
             public="true"
         >
             <argument type="service" id="nextstore_sylius_otcommerce.service.ot_service" />
+            <argument type="service" id="nextstore_sylius_otcommerce.factory.product" />
+            <argument type="service" id="nextstore_sylius_otcommerce.factory.product_variant" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
             <call method="setContainer">
                 <argument type="service" id="service_container" />
             </call>

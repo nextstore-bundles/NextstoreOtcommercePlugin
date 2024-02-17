@@ -22,7 +22,7 @@ class OtService
     {
         try {
             $otParameters = new OtParameters();
-            $otParameters->setItemId($params['itemId']);
+            $otParameters->setItemId($params['productId']);
 
             $item = Otapi::request('GetItemFullInfo', $otParameters);
             
