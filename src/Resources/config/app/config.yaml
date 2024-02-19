@@ -1,3 +1,6 @@
+imports:
+    - { resource: "@SyliusAdminBundle/Resources/config/app/config.yml" }
+
 parameters:
     ot_key: '%env(OT_KEY)%'
     ot_secret: '%env(OT_SECRET)%'
