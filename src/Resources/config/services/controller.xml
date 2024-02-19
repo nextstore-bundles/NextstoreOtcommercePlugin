@@ -12,7 +12,11 @@
             <argument type="service" id="nextstore_sylius_otcommerce.service.ot_service" />
             <argument type="service" id="nextstore_sylius_otcommerce.factory.product" />
             <argument type="service" id="nextstore_sylius_otcommerce.factory.product_variant" />
+            <argument type="service" id="sylius.factory.order_item" />
             <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="sylius.order_processing.order_processor" />
+            <argument type="service" id="sylius.order_item_quantity_modifier" />
+            <argument type="service" id="serializer" />
             <call method="setContainer">
                 <argument type="service" id="service_container" />
             </call>
