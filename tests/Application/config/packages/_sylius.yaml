@@ -29,3 +29,9 @@ sylius_product:
         product_variant:
             classes:
                 model: Tests\Nextstore\SyliusOtcommercePlugin\Application\src\Entity\Product\ProductVariant
+
+sylius_taxonomy:
+    resources:
+        taxon:
+            classes:
+                model: Tests\Nextstore\SyliusOtcommercePlugin\Application\src\Entity\Taxonomy\Taxon

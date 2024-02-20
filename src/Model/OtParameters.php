@@ -45,6 +45,8 @@ class OtParameters
     private ?string $userPassword = null;
     private ?string $sessionId = null;
 
+    private ?string $providerType = null;
+
     /** @return int|null */
     public function getFramePosition(): ?int
     {
@@ -259,6 +261,16 @@ class OtParameters
     public function setSessionId(string $sessionId): void
     {
         $this->sessionId = $sessionId;
+    }
+
+    public function getProviderType(): ?string
+    {
+        return $this->providerType;
+    }
+
+    public function setProviderType(string $providerType): void
+    {
+        $this->providerType = $providerType;
     }
 
     /** @return array */
