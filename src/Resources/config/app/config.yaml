@@ -5,3 +5,9 @@ parameters:
     ot_key: '%env(OT_KEY)%'
     ot_secret: '%env(OT_SECRET)%'
     ot_lang: '%env(OT_LANG)%'
+
+services:
+    nextstore_sylius_otcommerce.form.extension.type.taxon:
+        class: Nextstore\SyliusOtcommercePlugin\Form\Extension\TaxonTypeExtension
+        tags:
+            - { name: form.type_extension, extended_type: Sylius\Bundle\TaxonomyBundle\Form\Type\TaxonType }
