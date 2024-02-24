@@ -11,7 +11,6 @@ use Nextstore\SyliusOtcommercePlugin\Service\OtResponse;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelPricing;
 use Sylius\Component\Core\Model\ProductInterface;
-use Sylius\Component\Core\Model\ProductVariant;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
 
 class ProductFactory implements ProductFactoryInterface
@@ -58,6 +57,7 @@ class ProductFactory implements ProductFactoryInterface
         
         $cp = $this->createChannelPricing($configuredItem, $promotionPrice);
         $cp->setProductVariant($variant);
+        $variant->addChannelPricing($cp);
         $channel = $this->channelContext->getChannel();
         $product->addChannel($channel);
 
@@ -65,7 +65,7 @@ class ProductFactory implements ProductFactoryInterface
         $this->entityManager->persist($product);
         $this->entityManager->flush();
 
-        return $product;
+        return ['product' => $product, 'variant' => $variant];
     }
 
     public function updateProductFromOt($itemInfo, $params, ModelProductInterface $product)

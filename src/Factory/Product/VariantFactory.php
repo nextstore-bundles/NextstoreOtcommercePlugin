@@ -48,6 +48,7 @@ class VariantFactory implements ProductVariantFactoryInterface
 
         $cp = $this->createChannelPricing($configuredItem, $promotionPrice);
         $cp->setProductVariant($variant);
+        $variant->addChannelPricing($cp);
 
         $this->entityManager->persist($variant);
         $this->entityManager->persist($product);

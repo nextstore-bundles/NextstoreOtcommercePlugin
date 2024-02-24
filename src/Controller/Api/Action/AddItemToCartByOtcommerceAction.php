@@ -48,12 +48,15 @@ class AddItemToCartByOtcommerceAction extends AbstractController
             $itemInfo = $this->otService->getItemFullInfo($params);
             Assert::true(isset($itemInfo['OtapiItemFullInfo']), $itemInfo);
             $product = $this->entityManager->getRepository(ProductInterface::class)->findOneBy(['code' => $params['productId']]);
-            if (!$product instanceof ProductInterface) $product = $this->productFactory->createProductFromOt($itemInfo['OtapiItemFullInfo'], $params);
-            else $product = $this->productFactory->updateProductFromOt($itemInfo['OtapiItemFullInfo'], $params, $product);
-            
-            $variant = $this->entityManager->getRepository(ProductVariantInterface::class)->findOneBy(['code' => $params['configuredItemId']]);
-            if (!$variant instanceof ProductVariantInterface) $variant = $this->variantFactory->createVariantFromOt($itemInfo['OtapiItemFullInfo'], $params, $product);
-            else $variant = $this->variantFactory->updateVariantFromOt($itemInfo['OtapiItemFullInfo'], $params, $variant);
+
+            if (!$product instanceof ProductInterface) {
+                ['product' => $product, 'variant' => $variant] = $this->productFactory->createProductFromOt($itemInfo['OtapiItemFullInfo'], $params);
+            } else {
+                $product = $this->productFactory->updateProductFromOt($itemInfo['OtapiItemFullInfo'], $params, $product);
+                $variant = $this->entityManager->getRepository(ProductVariantInterface::class)->findOneBy(['code' => $params['configuredItemId']]);
+                if (!$variant instanceof ProductVariantInterface) $variant = $this->variantFactory->createVariantFromOt($itemInfo['OtapiItemFullInfo'], $params, $product);
+                else $variant = $this->variantFactory->updateVariantFromOt($itemInfo['OtapiItemFullInfo'], $params, $variant);
+            }
 
             // Add Item to Order
             /** @var Order $order */
