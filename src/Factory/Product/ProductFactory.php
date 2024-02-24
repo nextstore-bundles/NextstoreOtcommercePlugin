@@ -10,8 +10,10 @@ use Nextstore\SyliusDropshippingCorePlugin\Model\ProductVariantInterface;
 use Nextstore\SyliusOtcommercePlugin\Service\OtResponse;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelPricing;
+use Sylius\Component\Core\Model\ChannelPricingInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
+use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class ProductFactory implements ProductFactoryInterface
 {
@@ -20,6 +22,7 @@ class ProductFactory implements ProductFactoryInterface
         private EntityManagerInterface $entityManager,
         private ChannelContextInterface $channelContext,
         private OtResponse $otResponse,
+        private FactoryInterface $channelPricingFactory,
     ) {
     }
 
@@ -46,7 +49,12 @@ class ProductFactory implements ProductFactoryInterface
         $product->setImageUrl($itemInfo['MainPictureUrl']);
 
         $configuredItem = $this->otResponse->findConfiguredItem($itemInfo['ConfiguredItems'], $params['configuredItemId']);
-        $attributeInfo = $this->otResponse->findAttributeInfo($itemInfo['Attributes'], $configuredItem);
+        if ($configuredItem === null) {
+            $configuredItem = $itemInfo;
+            $attributeInfo = ['value' => $itemInfo['Title'], 'imageUrl' => $itemInfo['MainPictureUrl']];
+        } else {
+            $attributeInfo = $this->otResponse->findAttributeInfo($itemInfo['Attributes'], $configuredItem);
+        }
         $promotionPrice = $this->otResponse->findMinPromotionPrice($itemInfo, $configuredItem);
 
         /** @var ProductVariantInterface $variant */
@@ -54,7 +62,7 @@ class ProductFactory implements ProductFactoryInterface
         $variant->setCode($configuredItem['Id']);
         $variant->setName($attributeInfo['value']);
         $variant->setImageUrl($attributeInfo['imageUrl']);
-        
+
         $cp = $this->createChannelPricing($configuredItem, $promotionPrice);
         $cp->setProductVariant($variant);
         $variant->addChannelPricing($cp);
@@ -81,15 +89,15 @@ class ProductFactory implements ProductFactoryInterface
         return $product;
     }
 
-    private function createChannelPricing($configuredItem, $promotionPrice): ChannelPricing
+    private function createChannelPricing($configuredItem, $promotionPrice): ChannelPricingInterface
     {
         $oneItemPriceWithoutDelivery = $configuredItem['Price']['ConvertedPriceList']['Internal']['Price'];
 
         $originalPrice = (int) $oneItemPriceWithoutDelivery * 100;
-        $price = $promotionPrice;        
+        $price = $promotionPrice;
 
         $channel = $this->channelContext->getChannel();
-        $cp = new ChannelPricing();
+        $cp = $this->channelPricingFactory->createNew();
         $cp->setChannelCode($channel->getCode());
         $cp->setMinimumPrice(0);
         $cp->setOriginalPrice($originalPrice);      // Үндсэн үнэ

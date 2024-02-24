@@ -14,6 +14,7 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="sylius.context.channel" />
             <argument type="service" id="nextstore_sylius_otcommerce.service.ot_response" />
+            <argument type="service" id="sylius.factory.channel_pricing" />
         </service>
 
         <service id="nextstore_sylius_otcommerce.factory.product_variant"
@@ -25,6 +26,7 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="sylius.context.channel" />
             <argument type="service" id="nextstore_sylius_otcommerce.service.ot_response" />
+            <argument type="service" id="sylius.factory.channel_pricing" />
         </service>
     </services>
 </container>
