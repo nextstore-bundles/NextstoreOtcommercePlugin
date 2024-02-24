@@ -5,22 +5,5 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="nextstore_sylius_otcommerce.controller.add_item_to_cart_by_otcommerce"
-            class="Nextstore\SyliusOtcommercePlugin\Controller\Api\Action\AddItemToCartByOtcommerceAction"
-            public="true"
-        >
-            <argument type="service" id="nextstore_sylius_otcommerce.service.ot_service" />
-            <argument type="service" id="nextstore_sylius_otcommerce.factory.product" />
-            <argument type="service" id="nextstore_sylius_otcommerce.factory.product_variant" />
-            <argument type="service" id="sylius.factory.order_item" />
-            <argument type="service" id="doctrine.orm.entity_manager" />
-            <argument type="service" id="sylius.order_processing.order_processor" />
-            <argument type="service" id="sylius.order_item_quantity_modifier" />
-            <argument type="service" id="serializer" />
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
-            <tag name="controller.service_arguments" />
-        </service>
     </services>
 </container>
