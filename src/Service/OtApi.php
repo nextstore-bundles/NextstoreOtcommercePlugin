@@ -12,6 +12,7 @@ use GuzzleHttp\Psr7\StreamWrapper;
 use JsonException;
 use Nextstore\SyliusOtcommercePlugin\Model\OtParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\OtXmlParameters;
+use Nextstore\SyliusOtcommercePlugin\Model\UserUpdateDataXmlParameters;
 
 /**
  * Class OtApi.
@@ -33,9 +34,9 @@ class OtApi
      *
      * @throws Exception
      */
-    public static function request(string $method, OtParameters $params = null, ?OtXmlParameters $xmlParams = null, bool $returnAsStream = false)
+    public static function request(string $method, OtParameters $params = null, ?OtXmlParameters $xmlParams = null, ?UserUpdateDataXmlParameters $userUpdateDataXmlParameters = null, bool $returnAsStream = false)
     {
-        $requestUrl = self::prepareRequest($method, $params, $xmlParams);
+        $requestUrl = self::prepareRequest($method, $params, $xmlParams, $userUpdateDataXmlParameters);
         
         // return $requestUrl;
         
@@ -64,12 +65,16 @@ class OtApi
     /**
      * @return array|null
      */
-    private static function prepareRequest(string $method, ?OtParameters $parameters = null, ?OtXmlParameters $xmlParams = null): string
+    private static function prepareRequest(string $method, ?OtParameters $parameters = null, ?OtXmlParameters $xmlParams = null, ?UserUpdateDataXmlParameters $userUpdateDataXmlParameters = null): string
     {
         $params = $parameters ? $parameters->getData() : [];
         self::createClient();
         if (null !== $xmlParams) {
             $params[$xmlParams->getFieldName()] = $xmlParams->createXmlParameters();
+        }
+
+        if (null !== $userUpdateDataXmlParameters) {
+            $params[$userUpdateDataXmlParameters->getFieldName()] = $userUpdateDataXmlParameters->createXmlParameters();
         }
         $params['instanceKey'] = self::getKey();
         $params['language'] = self::getLang();
