@@ -33,4 +33,20 @@ class OtService
             return $e->getMessage();
         }
     }
+
+    public function authenticateInstanceOperator()
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setUserLogin($this->parameterBag->get('ot_user_login'));
+            $otParameters->setUserPassword($this->parameterBag->get('ot_user_password'));
+
+            $res = Otapi::request('AuthenticateInstanceOperator', $otParameters);
+            $decoded = json_decode($$res, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }

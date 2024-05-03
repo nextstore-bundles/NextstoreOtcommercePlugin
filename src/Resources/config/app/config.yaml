@@ -5,6 +5,8 @@ parameters:
     ot_key: '%env(OT_KEY)%'
     ot_secret: '%env(OT_SECRET)%'
     ot_lang: '%env(OT_LANG)%'
+    ot_user_login: '%env(OT_USER_LOGIN)%'
+    ot_user_password: '%env(OT_USER_PASSWORD)%'
 
 services:
     nextstore_sylius_otcommerce.form.extension.type.taxon:
