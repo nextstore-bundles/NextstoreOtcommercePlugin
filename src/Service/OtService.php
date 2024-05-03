@@ -42,7 +42,7 @@ class OtService
             $otParameters->setUserPassword($this->parameterBag->get('ot_user_password'));
 
             $res = Otapi::request('AuthenticateInstanceOperator', $otParameters);
-            $decoded = json_decode($$res, true, 512, JSON_THROW_ON_ERROR);
+            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
 
             return $decoded;
         } catch (Exception $e) {
