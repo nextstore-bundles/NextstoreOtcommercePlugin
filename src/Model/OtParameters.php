@@ -44,6 +44,7 @@ class OtParameters
     private ?string $userLogin = null;
     private ?string $userPassword = null;
     private ?string $sessionId = null;
+    private ?bool $rememberMe = true;
 
     private ?string $providerType = null;
 
@@ -271,6 +272,18 @@ class OtParameters
     public function setProviderType(string $providerType): void
     {
         $this->providerType = $providerType;
+    }
+
+    /** @return bool|null */
+    public function getRememberMe(): ?bool
+    {
+        return $this->rememberMe;
+    }
+
+    /*** @param bool $rememberMe */
+    public function setRememberMe(bool $rememberMe): void
+    {
+        $this->rememberMe = $rememberMe;
     }
 
     /** @return array */
