@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Nextstore\SyliusOtcommercePlugin\Service;
 
 use Exception;
+use Nextstore\SyliusOtcommercePlugin\Model\OrderAddDataXmlParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\OtParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\UserUpdateDataXmlParameters;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -81,6 +82,24 @@ class OtService
 
             $res = Otapi::request('AddUser', $otParameters, null, $userUpdateDataXmlParameters);
             $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function addOrder(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+
+            $orderAddDataXmlParameters = new OrderAddDataXmlParameters();
+
+            $order = Otapi::request('AddOrder', $otParameters, null, null, $orderAddDataXmlParameters);
+            
+            $decoded = json_decode($order, true, 512, JSON_THROW_ON_ERROR);
 
             return $decoded;
         } catch (Exception $e) {
