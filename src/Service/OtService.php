@@ -96,6 +96,10 @@ class OtService
             $otParameters->setSessionId($params['sessionId']);
 
             $orderAddDataXmlParameters = new OrderAddDataXmlParameters();
+            if (array_key_exists('deliveryModeId', $params) && null !== $params) $orderAddDataXmlParameters->setDeliveryModeId((string) $params['deliveryModeId']);
+            if (array_key_exists('comment', $params) && null !== $params) $orderAddDataXmlParameters->setComment((string) $params['comment']);
+            if (array_key_exists('userProfileId', $params) && null !== $params) $orderAddDataXmlParameters->setUserProfileId((int) $params['userProfileId']);
+            if (array_key_exists('items', $params) && null !== $params) $orderAddDataXmlParameters->setItems($params['items']);
 
             $order = Otapi::request('AddOrder', $otParameters, null, null, $orderAddDataXmlParameters);
             

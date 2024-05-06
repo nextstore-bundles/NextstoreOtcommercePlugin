@@ -57,12 +57,12 @@ class OrderAddDataXmlParameters
         $this->comment = $comment;
     }
 
-    public function getUserProfileId(): ?string
+    public function getUserProfileId(): ?int
     {
         return $this->userProfileId;
     }
 
-    public function setUserProfileId(string $userProfileId): void
+    public function setUserProfileId(int $userProfileId): void
     {
         $this->userProfileId = $userProfileId;
     }
