@@ -53,6 +53,8 @@ class OtParameters
     private ?string $comment = null;
     private ?bool $isDebit = null;
     private ?string $transactionDate = null;
+    // Method PaymentPersonalAccount
+    private ?string $salesId = null;
 
     /** @return int|null */
     public function getFramePosition(): ?int
@@ -340,6 +342,16 @@ class OtParameters
     public function setTransactionDate(string $transactionDate): void
     {
         $this->transactionDate = $transactionDate;
+    }
+
+    public function getSalesId(): ?string
+    {
+        return $this->salesId;
+    }
+
+    public function setSalesId(string $salesId): void
+    {
+        $this->salesId = $salesId;
     }
 
     /** @return array */
