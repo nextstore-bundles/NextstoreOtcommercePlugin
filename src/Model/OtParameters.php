@@ -47,6 +47,12 @@ class OtParameters
     private ?bool $rememberMe = true;
 
     private ?string $providerType = null;
+    // Method PostTransaction
+    private ?string $customerId = null;
+    private ?string $amount = null;
+    private ?string $comment = null;
+    private ?bool $isDebit = null;
+    private ?string $transactionDate = null;
 
     /** @return int|null */
     public function getFramePosition(): ?int
@@ -284,6 +290,56 @@ class OtParameters
     public function setRememberMe(bool $rememberMe): void
     {
         $this->rememberMe = $rememberMe;
+    }
+
+    public function getCustomerId(): ?string
+    {
+        return $this->customerId;
+    }
+
+    public function setCustomerId(string $customerId): void
+    {
+        $this->customerId = $customerId;
+    }
+
+    public function getAmount(): ?string
+    {
+        return $this->amount;
+    }
+
+    public function setAmount(string $amount): void
+    {
+        $this->amount = $amount;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(string $comment): void
+    {
+        $this->comment = $comment;
+    }
+
+    public function getIsDebit(): ?bool
+    {
+        return $this->isDebit;
+    }
+
+    public function setIsDebit(bool $isDebit): void
+    {
+        $this->isDebit = $isDebit;
+    }
+
+    public function getTransactionDate(): ?string
+    {
+        return $this->transactionDate;
+    }
+
+    public function setTransactionDate(string $transactionDate): void
+    {
+        $this->transactionDate = $transactionDate;
     }
 
     /** @return array */
