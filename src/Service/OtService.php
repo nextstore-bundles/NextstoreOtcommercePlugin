@@ -127,4 +127,26 @@ class OtService
             return $e->getMessage();
         }
     }
+
+    // Deposit funds to customer account
+    public function postTransaction(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setCustomerId($params['customerId']);
+            $otParameters->setAmount($params['amount']);
+            $otParameters->setComment($params['comment']);
+            $otParameters->setIsDebit($params['isDebit']);
+            $otParameters->setTransactionDate($params['transactionDate']);
+
+            $transaction = Otapi::request('PostTransaction', $otParameters);
+            
+            $decoded = json_decode($transaction, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
