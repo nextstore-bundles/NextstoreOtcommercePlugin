@@ -149,4 +149,22 @@ class OtService
             return $e->getMessage();
         }
     }
+
+    public function paymentPersonalAccount(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setAmount($params['amount']);
+            $otParameters->setSalesId($params['salesId']);
+
+            $transaction = Otapi::request('PaymentPersonalAccount', $otParameters);
+            
+            $decoded = json_decode($transaction, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
