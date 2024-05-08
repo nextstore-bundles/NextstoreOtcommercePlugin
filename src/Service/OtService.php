@@ -167,4 +167,22 @@ class OtService
             return $e->getMessage();
         }
     }
+
+    public function getProviderOrdersIntegrationSessionAuthenticationInfo(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setProviderType($params['providerType']);
+            $otParameters->setReturnUrl($params['returnUrl']);
+
+            $transaction = Otapi::request('GetProviderOrdersIntegrationSessionAuthenticationInfo', $otParameters);
+            
+            $decoded = json_decode($transaction, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
