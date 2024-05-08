@@ -10,6 +10,7 @@ parameters:
     ot_customer_login: '%env(OT_CUSTOMER_LOGIN)%'
     ot_customer_password: '%env(OT_CUSTOMER_PASSWORD)%'
     ot_delivery_mode_id: '%env(OT_DELIVERY_MODE_ID)%'
+    ot_return_url: '%env(OT_RETURN_URL)%'
 
 services:
     nextstore_sylius_otcommerce.form.extension.type.taxon:
