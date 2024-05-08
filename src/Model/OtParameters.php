@@ -55,6 +55,8 @@ class OtParameters
     private ?string $transactionDate = null;
     // Method PaymentPersonalAccount
     private ?string $salesId = null;
+    // Method GetProviderOrdersIntegrationSessionAuthenticationInfo
+    private ?string $returnUrl = null;
 
     /** @return int|null */
     public function getFramePosition(): ?int
@@ -352,6 +354,16 @@ class OtParameters
     public function setSalesId(string $salesId): void
     {
         $this->salesId = $salesId;
+    }
+
+    public function getReturnUrl(): ?string
+    {
+        return $this->returnUrl;
+    }
+
+    public function setReturnUrl(string $returnUrl): void
+    {
+        $this->returnUrl = $returnUrl;
     }
 
     /** @return array */
