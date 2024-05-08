@@ -7,6 +7,8 @@ namespace Nextstore\SyliusOtcommercePlugin\Service;
 use Exception;
 use Nextstore\SyliusOtcommercePlugin\Model\OrderAddDataXmlParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\OtParameters;
+use Nextstore\SyliusOtcommercePlugin\Model\OtXmlParameters;
+use Nextstore\SyliusOtcommercePlugin\Model\RunOrderExportingToProviderXmlParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\UserUpdateDataXmlParameters;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -158,9 +160,9 @@ class OtService
             $otParameters->setAmount($params['amount']);
             $otParameters->setSalesId($params['salesId']);
 
-            $transaction = Otapi::request('PaymentPersonalAccount', $otParameters);
+            $res = Otapi::request('PaymentPersonalAccount', $otParameters);
             
-            $decoded = json_decode($transaction, true, 512, JSON_THROW_ON_ERROR);
+            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
 
             return $decoded;
         } catch (Exception $e) {
@@ -176,9 +178,9 @@ class OtService
             $otParameters->setProviderType($params['providerType']);
             $otParameters->setReturnUrl($params['returnUrl']);
 
-            $transaction = Otapi::request('GetProviderOrdersIntegrationSessionAuthenticationInfo', $otParameters);
+            $res = Otapi::request('GetProviderOrdersIntegrationSessionAuthenticationInfo', $otParameters);
             
-            $decoded = json_decode($transaction, true, 512, JSON_THROW_ON_ERROR);
+            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
 
             return $decoded;
         } catch (Exception $e) {
@@ -193,9 +195,35 @@ class OtService
             $otParameters->setSessionId($params['sessionId']);
             $otParameters->setProviderType($params['providerType']);
 
-            $transaction = Otapi::request('GetProviderOrdersIntegrationSessionInfoList', $otParameters);
+            $res = Otapi::request('GetProviderOrdersIntegrationSessionInfoList', $otParameters);
             
-            $decoded = json_decode($transaction, true, 512, JSON_THROW_ON_ERROR);
+            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function runOrderExportingToProvider(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setProviderType($params['providerType']);
+            $otParameters->setProviderSessionId($params['providerSessionId']);
+
+            $runOrderXmlParameters = new RunOrderExportingToProviderXmlParameters();
+            $runOrderXmlParameters->setOrderId($params['orderId']);
+
+            $xmlParameters = new OtXmlParameters();
+            $xmlParameters->setFieldName('xmlParameters');
+            $xmlParameters->setType('Parameters');
+            $xmlParameters->setXmlData($runOrderXmlParameters->createXmlParameters());
+
+            $res = Otapi::request('RunOrderExportingToProvider', $otParameters, $xmlParameters);
+            
+            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
 
             return $decoded;
         } catch (Exception $e) {

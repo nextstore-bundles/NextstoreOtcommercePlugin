@@ -57,6 +57,8 @@ class OtParameters
     private ?string $salesId = null;
     // Method GetProviderOrdersIntegrationSessionAuthenticationInfo
     private ?string $returnUrl = null;
+    // Method RunOrderExportingToProvider
+    private ?string $providerSessionId = null;
 
     /** @return int|null */
     public function getFramePosition(): ?int
@@ -364,6 +366,16 @@ class OtParameters
     public function setReturnUrl(string $returnUrl): void
     {
         $this->returnUrl = $returnUrl;
+    }
+
+    public function getProviderSessionId(): ?string
+    {
+        return $this->providerSessionId;
+    }
+
+    public function setProviderSessionId(string $providerSessionId): void
+    {
+        $this->providerSessionId = $providerSessionId;
     }
 
     /** @return array */
