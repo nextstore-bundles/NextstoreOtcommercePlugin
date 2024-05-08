@@ -311,6 +311,8 @@ class OtXmlParameters
             $result = $this->getXmlData();
         } elseif ('xmlSettings' == $this->getFieldName() && 'CurrencySettings' == $this->getType()) {
             $result = $this->getXmlData();
+        } elseif ('xmlParameters' == $this->getFieldName() && 'Parameters' == $this->getType()) {
+            $result = $this->getXmlData();
         }
 
         return $result;
