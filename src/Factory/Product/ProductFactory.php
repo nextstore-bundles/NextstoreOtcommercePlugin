@@ -47,6 +47,7 @@ class ProductFactory implements ProductFactoryInterface
         $product->setExternalVendorId($itemInfo['VendorId']);
         $product->setWebUrl($itemInfo['ExternalItemUrl']);
         $product->setImageUrl($itemInfo['MainPictureUrl']);
+        $product->setProviderType($itemInfo['ProviderType']);
 
         $configuredItem = $this->otResponse->findConfiguredItem($itemInfo['ConfiguredItems'], $params['configuredItemId']);
         if ($configuredItem === null) {
@@ -82,6 +83,7 @@ class ProductFactory implements ProductFactoryInterface
         $product->setExternalVendorId($itemInfo['VendorId']);
         $product->setWebUrl($itemInfo['ExternalItemUrl']);
         $product->setImageUrl($itemInfo['MainPictureUrl']);
+        $product->setProviderType($itemInfo['ProviderType']);
 
         $this->entityManager->persist($product);
         $this->entityManager->flush();
