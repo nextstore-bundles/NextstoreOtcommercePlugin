@@ -45,9 +45,9 @@ class OtResponse
             foreach ($configuredItem['Configurators'] as $configurator) {
                 if ($configurator['Pid'] === $attribute['Pid'] && $configurator['Vid'] === $attribute['Vid']) {
                     if ($attributeInfo['value'] === '') {
-                        $attributeInfo['value'] .= $attribute['Value'].';';
+                        $attributeInfo['value'] .= $attribute['PropertyName'].':'.$attribute['Value'].';';
                     } else {
-                        $attributeInfo['value'] .= ' '.$attribute['Value'].';';
+                        $attributeInfo['value'] .= ' '.$attribute['PropertyName'].':'.$attribute['Value'].';';
                     }
                     $attributeInfo['imageUrl'] = $attribute['ImageUrl'] ?? $attributeInfo['imageUrl'];
                 }
