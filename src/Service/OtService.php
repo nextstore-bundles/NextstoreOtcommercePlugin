@@ -230,4 +230,20 @@ class OtService
             return $e->getMessage();
         }
     }
+
+    public function getVendorInfo(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setVendorId($params['vendorId']);
+
+            $item = Otapi::request('GetVendorInfo', $otParameters);
+            
+            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
