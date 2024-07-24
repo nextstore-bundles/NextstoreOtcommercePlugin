@@ -231,6 +231,32 @@ class OtService
         }
     }
 
+    public function runOrdersSynchronizingWithProvider(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setProviderType($params['providerType']);
+            $otParameters->setProviderSessionId($params['providerSessionId']);
+
+            $runOrderXmlParameters = new RunOrderExportingToProviderXmlParameters();
+            $runOrderXmlParameters->setOrderIds($params['orderIds']);
+
+            $xmlParameters = new OtXmlParameters();
+            $xmlParameters->setFieldName('xmlParameters');
+            $xmlParameters->setType('Parameters');
+            $xmlParameters->setXmlData($runOrderXmlParameters->createXmlParameters());
+
+            $res = Otapi::request('RunOrdersSynchronizingWithProvider', $otParameters, $xmlParameters);
+            
+            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
     public function getVendorInfo(array $params)
     {
         try {

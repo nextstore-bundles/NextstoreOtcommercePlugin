@@ -11,6 +11,7 @@ class RunOrderExportingToProviderXmlParameters
 {
     private ?string $orderId = null;
     private array $orderLineIds = [];
+    private array $orderIds = [];
 
     public function getOrderId(): ?string
     {
@@ -32,6 +33,16 @@ class RunOrderExportingToProviderXmlParameters
         $this->orderLineIds = $orderLineIds;
     }
 
+    public function getOrderIds(): array
+    {
+        return $this->orderIds;
+    }
+
+    public function setOrderIds(array $orderIds)
+    {
+        $this->orderIds = $orderIds;
+    }
+
     public function createXmlParameters(): string
     {
         $xmlData = [];
@@ -45,6 +56,13 @@ class RunOrderExportingToProviderXmlParameters
                 $xmlData[] = '<Id>'.$orderLineId.'</Id>';
             }
             $xmlData[] = '</OrderLineIds>';
+        }
+        if (count($this->getOrderIds()) > 0) {
+            $xmlData[] = '<OrderIds>';
+            foreach ($this->getOrderIds() as $orderId) {
+                $xmlData[] = '<Id>'.$orderId.'</Id>';
+            }
+            $xmlData[] = '</OrderIds>';
         }
         $xmlData[] = '</Parameters>';
 
