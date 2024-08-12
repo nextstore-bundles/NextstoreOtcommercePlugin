@@ -288,4 +288,21 @@ class OtService
             return $e->getMessage();
         }
     }
+
+    public function getSalesOrderDetails(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setSalesId($params['salesId']);
+
+            $res = Otapi::request('GetSalesOrderDetails', $otParameters);
+            
+            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
