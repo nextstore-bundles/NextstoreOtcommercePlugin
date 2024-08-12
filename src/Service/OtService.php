@@ -55,6 +55,22 @@ class OtService
         }
     }
 
+    public function authenticateAsUser(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setUserLogin($this->parameterBag->get('ot_customer_login'));
+            $otParameters->setSessionId($params['sessionId']);
+
+            $res = Otapi::request('AuthenticateAsUser', $otParameters);
+            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
     public function authenticateInstanceOperator()
     {
         try {
