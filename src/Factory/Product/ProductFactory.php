@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nextstore\SyliusOtcommercePlugin\Factory\Product;
 
+use App\Entity\Product\ProductTranslation;
+use App\Entity\Product\ProductVariantTranslation;
 use Doctrine\ORM\EntityManagerInterface;
 use Nextstore\SyliusDropshippingCorePlugin\Model\ProductInterface as ModelProductInterface;
 use Nextstore\SyliusDropshippingCorePlugin\Model\ProductVariantInterface;
@@ -12,9 +14,7 @@ use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelPricing;
 use Sylius\Component\Core\Model\ChannelPricingInterface;
 use Sylius\Component\Core\Model\ProductInterface;
-use Sylius\Component\Core\Model\ProductTranslation;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
-use Sylius\Component\Product\Model\ProductVariantTranslation;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class ProductFactory implements ProductFactoryInterface
@@ -43,8 +43,7 @@ class ProductFactory implements ProductFactoryInterface
         /** @var ModelProductInterface $product */
         $product = $this->createWithVariant();
         $product->setCode($itemInfo['Id']);
-        $this->modifyTranslation($product, $params, $itemInfo['Title']);
-        $product->setSlug($itemInfo['Id']);
+        $this->modifyTranslation($product, $params, $itemInfo['Title'], $itemInfo['Id']);
         $product->setExternalProductId($itemInfo['Id']);
         $product->setExternalVendorId($itemInfo['VendorId']);
         $product->setWebUrl($itemInfo['ExternalItemUrl']);
@@ -81,7 +80,7 @@ class ProductFactory implements ProductFactoryInterface
 
     public function updateProductFromOt($itemInfo, $params, ModelProductInterface $product)
     {
-        $this->modifyTranslation($product, $params, $itemInfo['Title']);
+        $this->modifyTranslation($product, $params, $itemInfo['Title'], $itemInfo['Id']);
         $product->setExternalVendorId($itemInfo['VendorId']);
         $product->setWebUrl($itemInfo['ExternalItemUrl']);
         $product->setImageUrl($itemInfo['MainPictureUrl']);
@@ -112,23 +111,35 @@ class ProductFactory implements ProductFactoryInterface
         return $cp;
     }
 
-    private function modifyTranslation(ModelProductInterface|ProductVariantInterface $object, $params, $name)
+    private function modifyTranslation(ModelProductInterface|ProductVariantInterface $object, $params, $name, $slug = null)
     {
-        $translation = $$object->getTranslation($params['localeCode']);
-        if ($translation->getLocale() === $params['localeCode']) {
-            $translation->setName($name);
-            $this->entityManager->persist($translation);
-        } else {
-            if ($object instanceof ModelProductInterface) {
+        $translation = $object->getTranslation($params['localeCode']);
+        if ($object instanceof ModelProductInterface) {
+            if ($translation->getLocale() === $params['localeCode']) {
+                $translation->setName($name);
+                $translation->setSlug($slug);
+                $this->entityManager->persist($translation);
+            } else {
                 $newTranslation = new ProductTranslation();
-            } elseif ($object instanceof ProductVariantInterface) {
-                $newTranslation = new ProductVariantTranslation();
+                $newTranslation->setName($name);
+                $newTranslation->setSlug($slug);
+                $newTranslation->setLocale($params['localeCode']);
+                $this->entityManager->persist($newTranslation);
+                $object->addTranslation($newTranslation);
+                $this->entityManager->persist($object);
             }
-            $newTranslation->setName($name);
-            $newTranslation->setLocale($params['localeCode']);
-            $this->entityManager->persist($newTranslation);
-            $object->addTranslation($newTranslation);
-            $this->entityManager->persist($object);
+        } elseif ($object instanceof ProductVariantInterface) {
+            if ($translation->getLocale() === $params['localeCode']) {
+                $translation->setName($name);
+                $this->entityManager->persist($translation);
+            } else {
+                $newTranslation = new ProductVariantTranslation();
+                $newTranslation->setName($name);
+                $newTranslation->setLocale($params['localeCode']);
+                $this->entityManager->persist($newTranslation);
+                $object->addTranslation($newTranslation);
+                $this->entityManager->persist($object);
+            }
         }
     }
 }

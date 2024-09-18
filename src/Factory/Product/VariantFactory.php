@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Nextstore\SyliusOtcommercePlugin\Factory\Product;
 
+use App\Entity\Product\ProductVariantTranslation;
 use Doctrine\ORM\EntityManagerInterface;
 use Nextstore\SyliusDropshippingCorePlugin\Model\ProductVariantInterface as ModelProductVariantInterface;
 use Nextstore\SyliusOtcommercePlugin\Service\OtResponse;
@@ -13,7 +14,6 @@ use Sylius\Component\Core\Model\ProductVariant;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Model\ProductInterface as ModelProductInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
-use Sylius\Component\Product\Model\ProductVariantTranslation;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class VariantFactory implements ProductVariantFactoryInterface
