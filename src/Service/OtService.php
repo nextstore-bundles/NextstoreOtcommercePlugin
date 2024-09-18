@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Nextstore\SyliusOtcommercePlugin\Service;
 
 use Exception;
+use Nextstore\SyliusOtcommercePlugin\Model\CurrencyRateHistoryGetParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\OrderAddDataXmlParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\OtParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\OtXmlParameters;
@@ -297,6 +298,33 @@ class OtService
             $otParameters->setSalesId($params['salesId']);
 
             $res = Otapi::request('GetSalesOrderDetails', $otParameters);
+            
+            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function getCurrencyRateHistory(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+
+            $currencyRateHistoryGetParameters = new CurrencyRateHistoryGetParameters();
+            $currencyRateHistoryGetParameters->setFirstCurrencyCode($params['firstCurrencyCode']);
+            $currencyRateHistoryGetParameters->setSecondCurrencyCode($params['secondCurrencyCode']);
+            $currencyRateHistoryGetParameters->setDateFrom($params['dateFrom']);
+            $currencyRateHistoryGetParameters->setDateTo($params['dateTo']);
+
+            $xmlParameters = new OtXmlParameters();
+            $xmlParameters->setFieldName('xmlParameters');
+            $xmlParameters->setType('CurrencyRateHistoryGetParameters');
+            $xmlParameters->setXmlData($currencyRateHistoryGetParameters->createXmlParameters());
+
+            $res = Otapi::request('GetCurrencyRateHistory', $otParameters, $xmlParameters);
             
             $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
 
