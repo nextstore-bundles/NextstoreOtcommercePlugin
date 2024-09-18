@@ -28,6 +28,9 @@ class OtService
         try {
             $otParameters = new OtParameters();
             $otParameters->setItemId($params['productId']);
+            if (array_key_exists('language', $params)) {
+                OtApi::setLang($params['language']);
+            }
 
             $item = Otapi::request('GetItemFullInfo', $otParameters);
             
