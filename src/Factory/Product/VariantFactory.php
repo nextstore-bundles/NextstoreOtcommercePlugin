@@ -13,6 +13,7 @@ use Sylius\Component\Core\Model\ProductVariant;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Model\ProductInterface as ModelProductInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
+use Sylius\Component\Product\Model\ProductVariantTranslation;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class VariantFactory implements ProductVariantFactoryInterface
@@ -50,7 +51,7 @@ class VariantFactory implements ProductVariantFactoryInterface
         /** @var ModelProductVariantInterface $variant */
         $variant = $this->createForProduct($product);
         $variant->setCode($configuredItem['Id']);
-        $variant->setName($attributeInfo['value']);
+        $this->modifyTranslation($variant, $params, $attributeInfo);
         $variant->setImageUrl($attributeInfo['imageUrl']);
 
         $cp = $this->createChannelPricing($configuredItem, $promotionPrice);
@@ -75,7 +76,7 @@ class VariantFactory implements ProductVariantFactoryInterface
         }
         $promotionPrice = $this->otResponse->findMinPromotionPrice($itemInfo, $configuredItem);
 
-        $variant->setName($attributeInfo['value']);
+        $this->modifyTranslation($variant, $params, $attributeInfo);
         $variant->setImageUrl($attributeInfo['imageUrl']);
         $cp = $variant->getChannelPricingForChannel($this->channelContext->getChannel());
         $this->updateChannelPricing($configuredItem, $promotionPrice, $cp);
@@ -119,5 +120,21 @@ class VariantFactory implements ProductVariantFactoryInterface
         $this->entityManager->persist($cp);
 
         return $cp;
+    }
+
+    private function modifyTranslation(ModelProductVariantInterface $variant, $params, $attributeInfo)
+    {
+        $translation = $variant->getTranslation($params['localeCode']);
+        if ($translation->getLocale() === $params['localeCode']) {
+            $translation->setName($attributeInfo['value']);
+            $this->entityManager->persist($translation);
+        } else {
+            $newTranslation = new ProductVariantTranslation();
+            $newTranslation->setName($attributeInfo['value']);
+            $newTranslation->setLocale($params['localeCode']);
+            $this->entityManager->persist($newTranslation);
+            $variant->addTranslation($newTranslation);
+            $this->entityManager->persist($variant);
+        }
     }
 }

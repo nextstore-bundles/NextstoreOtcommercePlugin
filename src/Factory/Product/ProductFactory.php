@@ -12,7 +12,9 @@ use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelPricing;
 use Sylius\Component\Core\Model\ChannelPricingInterface;
 use Sylius\Component\Core\Model\ProductInterface;
+use Sylius\Component\Core\Model\ProductTranslation;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
+use Sylius\Component\Product\Model\ProductVariantTranslation;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class ProductFactory implements ProductFactoryInterface
@@ -41,7 +43,7 @@ class ProductFactory implements ProductFactoryInterface
         /** @var ModelProductInterface $product */
         $product = $this->createWithVariant();
         $product->setCode($itemInfo['Id']);
-        $product->setName($itemInfo['Title']);
+        $this->modifyTranslation($product, $params, $itemInfo['Title']);
         $product->setSlug($itemInfo['Id']);
         $product->setExternalProductId($itemInfo['Id']);
         $product->setExternalVendorId($itemInfo['VendorId']);
@@ -61,7 +63,7 @@ class ProductFactory implements ProductFactoryInterface
         /** @var ProductVariantInterface $variant */
         $variant = $product->getVariants()[0];
         $variant->setCode($configuredItem['Id']);
-        $variant->setName($attributeInfo['value']);
+        $this->modifyTranslation($variant, $params, $attributeInfo['value']);
         $variant->setImageUrl($attributeInfo['imageUrl']);
 
         $cp = $this->createChannelPricing($configuredItem, $promotionPrice);
@@ -79,7 +81,7 @@ class ProductFactory implements ProductFactoryInterface
 
     public function updateProductFromOt($itemInfo, $params, ModelProductInterface $product)
     {
-        $product->setName($itemInfo['Title']);
+        $this->modifyTranslation($product, $params, $itemInfo['Title']);
         $product->setExternalVendorId($itemInfo['VendorId']);
         $product->setWebUrl($itemInfo['ExternalItemUrl']);
         $product->setImageUrl($itemInfo['MainPictureUrl']);
@@ -108,5 +110,25 @@ class ProductFactory implements ProductFactoryInterface
         $this->entityManager->persist($cp);
 
         return $cp;
+    }
+
+    private function modifyTranslation(ModelProductInterface|ProductVariantInterface $object, $params, $name)
+    {
+        $translation = $$object->getTranslation($params['localeCode']);
+        if ($translation->getLocale() === $params['localeCode']) {
+            $translation->setName($name);
+            $this->entityManager->persist($translation);
+        } else {
+            if ($object instanceof ModelProductInterface) {
+                $newTranslation = new ProductTranslation();
+            } elseif ($object instanceof ProductVariantInterface) {
+                $newTranslation = new ProductVariantTranslation();
+            }
+            $newTranslation->setName($name);
+            $newTranslation->setLocale($params['localeCode']);
+            $this->entityManager->persist($newTranslation);
+            $object->addTranslation($newTranslation);
+            $this->entityManager->persist($object);
+        }
     }
 }
