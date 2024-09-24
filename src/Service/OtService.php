@@ -61,6 +61,28 @@ class OtService
         }
     }
 
+    public function getItemPrice(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setQuantity($params['quantity']);
+            $otParameters->setItemId($params['itemId']);
+            $otParameters->setPromotionId($params['promotionId']);
+            $otParameters->setConfigurationId($params['configurationId']);
+            if (array_key_exists('language', $params)) {
+                OtApi::setLang($params['language']);
+            }
+
+            $item = Otapi::request('GetItemPrice', $otParameters);
+            
+            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
     public function authenticate()
     {
         try {
