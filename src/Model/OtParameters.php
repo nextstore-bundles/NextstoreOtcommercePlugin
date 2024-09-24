@@ -19,6 +19,8 @@ class OtParameters
 
     private ?string $ids = null;
 
+    private ?string $idsList = null;
+
     private ?OtBlockList $blockList = null;
 
     private ?string $itemId = null;
@@ -118,6 +120,18 @@ class OtParameters
     public function setIds(array $ids): void
     {
         $this->ids = implode(';', $ids);
+    }
+
+    /** @return string|null */
+    public function getIdsList(): ?string
+    {
+        return $this->idsList;
+    }
+
+    /** @param array $idsList */
+    public function setIdsList(array $idsList): void
+    {
+        $this->idsList = implode(';', $idsList);
     }
 
     /** @return OtBlockList|null */

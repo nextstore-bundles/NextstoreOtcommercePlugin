@@ -42,6 +42,25 @@ class OtService
         }
     }
 
+    public function getItemInfoList(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setIdsList($params['idsList']);
+            if (array_key_exists('language', $params)) {
+                OtApi::setLang($params['language']);
+            }
+
+            $item = Otapi::request('GetItemInfoList', $otParameters);
+            
+            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
     public function authenticate()
     {
         try {
