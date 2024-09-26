@@ -377,4 +377,207 @@ class OtService
             return $e->getMessage();
         }
     }
+
+    public function getBasket(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            if (array_key_exists('language', $params)) {
+                OtApi::setLang($params['language']);
+            }
+
+            $item = Otapi::request('GetBasket', $otParameters);
+            
+            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function getPartialBasket(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setElements($params['elements']);
+            if (array_key_exists('language', $params)) {
+                OtApi::setLang($params['language']);
+            }
+
+            $item = Otapi::request('GetPartialBasket', $otParameters);
+            
+            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function clearBasket(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            if (array_key_exists('language', $params)) {
+                OtApi::setLang($params['language']);
+            }
+
+            $item = Otapi::request('ClearBasket', $otParameters);
+            
+            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function addItemToBasket(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setItemId($params['itemId']);
+            $otParameters->setConfigurationId($params['configurationId']);
+            $otParameters->setQuantity($params['quantity']);
+            $otParameters->setFieldParameters($params['fieldParameters']);
+            if (array_key_exists('language', $params)) {
+                OtApi::setLang($params['language']);
+            }
+
+            $item = Otapi::request('AddItemToBasket', $otParameters);
+            
+            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function editBasketItemQuantity(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setElementId($params['elementId']);
+            $otParameters->setQuantity($params['quantity']);
+            $otParameters->setFieldParameters($params['fieldParameters']);
+            if (array_key_exists('language', $params)) {
+                OtApi::setLang($params['language']);
+            }
+
+            $item = Otapi::request('EditBasketItemQuantity', $otParameters);
+            
+            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function batchSimplifiedAddItemsToBasket(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setItemId($params['itemId']);
+            if (array_key_exists('language', $params)) {
+                OtApi::setLang($params['language']);
+            }
+
+            $item = Otapi::request('BatchSimplifiedAddItemsToBasket', $otParameters);
+            
+            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function removeItemFromBasket(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setElementId($params['elementId']);
+            if (array_key_exists('language', $params)) {
+                OtApi::setLang($params['language']);
+            }
+
+            $item = Otapi::request('RemoveItemFromBasket', $otParameters);
+            
+            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function removeItemsFromBasket(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setElements($params['elements']);
+            if (array_key_exists('language', $params)) {
+                OtApi::setLang($params['language']);
+            }
+
+            $item = Otapi::request('RemoveItemsFromBasket', $otParameters);
+            
+            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function runBasketChecking(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setElements($params['elements']);
+            if (array_key_exists('language', $params)) {
+                OtApi::setLang($params['language']);
+            }
+
+            $item = Otapi::request('RunBasketChecking', $otParameters);
+            
+            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function getBasketCheckingResult(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setActivityId($params['activityId']);
+            if (array_key_exists('language', $params)) {
+                OtApi::setLang($params['language']);
+            }
+
+            $item = Otapi::request('GetBasketCheckingResult', $otParameters);
+            
+            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }

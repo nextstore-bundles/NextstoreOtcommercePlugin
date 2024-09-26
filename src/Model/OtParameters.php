@@ -25,6 +25,12 @@ class OtParameters
 
     private ?string $itemId = null;
 
+    private ?string $elementId = null;
+
+    private ?string $elements = null;
+
+    private ?string $fieldParameters = null;
+
     private ?int $quantity = null;
     /** @var string */
     private ?string $promotionId = null;
@@ -156,6 +162,42 @@ class OtParameters
     public function setItemId(string $itemId): void
     {
         $this->itemId = $itemId;
+    }
+
+    /** @return string|null */
+    public function getElementId(): ?string
+    {
+        return $this->elementId;
+    }
+
+    /** @param string $elementId */
+    public function setElementId(string $elementId): void
+    {
+        $this->elementId = $elementId;
+    }
+
+    /** @return string|null */
+    public function getElements(): ?string
+    {
+        return $this->elements;
+    }
+
+    /** @param array $elements */
+    public function setElements(array $elements): void
+    {
+        $this->elements = implode(';', $elements);
+    }
+
+    /** @return string|null */
+    public function getFieldParameters(): ?string
+    {
+        return $this->fieldParameters;
+    }
+
+    /** @param string $fieldParameters */
+    public function setFieldParameters(string $fieldParameters): void
+    {
+        $this->fieldParameters = $fieldParameters;
     }
 
     /** @return int|null */
