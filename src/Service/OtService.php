@@ -83,12 +83,16 @@ class OtService
         }
     }
 
-    public function authenticate()
+    public function authenticate(array $params = [])
     {
         try {
             $otParameters = new OtParameters();
             $otParameters->setUserLogin($this->parameterBag->get('ot_customer_login'));
             $otParameters->setUserPassword($this->parameterBag->get('ot_customer_password'));
+            if (array_key_exists('userLogin', $params) && array_key_exists('userPassword', $params)) {
+                $otParameters->setUserLogin($params['userLogin']);
+                $otParameters->setUserPassword($params['userPassword']);
+            }
             $otParameters->setRememberMe(true);
 
             $res = Otapi::request('Authenticate', $otParameters);
@@ -106,6 +110,9 @@ class OtService
             $otParameters = new OtParameters();
             $otParameters->setUserLogin($this->parameterBag->get('ot_customer_login'));
             $otParameters->setSessionId($params['sessionId']);
+            if (array_key_exists('userLogin', $params)) {
+                $otParameters->setUserLogin($params['userLogin']);
+            }
 
             $res = Otapi::request('AuthenticateAsUser', $otParameters);
             $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
