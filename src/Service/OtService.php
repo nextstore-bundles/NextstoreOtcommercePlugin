@@ -139,6 +139,21 @@ class OtService
         }
     }
 
+    public function getUserProfileInfoList(array $params = [])
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+
+            $res = Otapi::request('GetUserProfileInfoList', $otParameters);
+            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
     public function addUser($sessionId, array $params)
     {
         try {
