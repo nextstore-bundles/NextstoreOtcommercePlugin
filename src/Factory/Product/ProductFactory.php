@@ -98,7 +98,7 @@ class ProductFactory implements ProductFactoryInterface
     {
         $oneItemPriceWithoutDelivery = $configuredItem['Price']['ConvertedPriceList']['Internal']['Price'];
 
-        $originalPrice = (int) $oneItemPriceWithoutDelivery * 100;
+        $originalPrice = (int) ($oneItemPriceWithoutDelivery * 100);
         $price = $promotionPrice;
 
         $channel = $this->channelContext->getChannel();
