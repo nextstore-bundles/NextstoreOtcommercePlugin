@@ -67,6 +67,8 @@ class ProductFactory implements ProductFactoryInterface
 
         $cp = $this->createChannelPricing($configuredItem, $promotionPrice);
         $cp->setProductVariant($variant);
+        $product->setPriceOt($cp->getPrice());
+        $product->setOriginalPriceOt($cp->getOriginalPrice());
         $variant->addChannelPricing($cp);
         $channel = $this->channelContext->getChannel();
         $product->addChannel($channel);
