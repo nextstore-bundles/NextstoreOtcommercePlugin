@@ -57,7 +57,12 @@ class ProductFactory implements ProductFactoryInterface
         } else {
             $attributeInfo = $this->otResponse->findAttributeInfo($itemInfo['Attributes'], $configuredItem);
         }
-        $promotionPrice = $this->otResponse->findMinPromotionPrice($itemInfo, $configuredItem);
+        
+        // Tmall baraa bwal
+        $promotionPrice = 0;
+        if (in_array('Tmall', $itemInfo['Features'])) {
+            $promotionPrice = $this->otResponse->findMinPromotionPrice($itemInfo, $configuredItem);
+        }
 
         /** @var ProductVariantInterface $variant */
         $variant = $product->getVariants()[0];
@@ -99,7 +104,10 @@ class ProductFactory implements ProductFactoryInterface
         $oneItemPriceWithoutDelivery = $configuredItem['Price']['ConvertedPriceList']['Internal']['Price'];
 
         $originalPrice = (int) ($oneItemPriceWithoutDelivery * 100);
-        $price = $promotionPrice;
+        $price = (int) ($oneItemPriceWithoutDelivery * 100);
+        if ($promotionPrice > 0) {
+            $price = $promotionPrice;
+        }
 
         $channel = $this->channelContext->getChannel();
         $cp = $this->channelPricingFactory->createNew();
