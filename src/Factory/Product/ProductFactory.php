@@ -60,7 +60,7 @@ class ProductFactory implements ProductFactoryInterface
         
         // Tmall baraa bwal
         $promotionPrice = 0;
-        if (in_array('Tmall', $itemInfo['Features'])) {
+        if (!in_array('Tmall', $itemInfo['Features'])) {
             $promotionPrice = $this->otResponse->findMinPromotionPrice($itemInfo, $configuredItem);
         }
 
