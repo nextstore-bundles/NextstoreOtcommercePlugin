@@ -78,7 +78,11 @@ class VariantFactory implements ProductVariantFactoryInterface
         } else {
             $attributeInfo = $this->otResponse->findAttributeInfo($itemInfo['Attributes'], $configuredItem);
         }
-        $promotionPrice = $this->otResponse->findMinPromotionPrice($itemInfo, $configuredItem);
+        // Tmall baraa bwal
+        $promotionPrice = 0;
+        if (in_array('Tmall', $itemInfo['Features'])) {
+            $promotionPrice = $this->otResponse->findMinPromotionPrice($itemInfo, $configuredItem);
+        }
 
         $this->modifyTranslation($variant, $params, $attributeInfo);
         $variant->setImageUrl($attributeInfo['imageUrl']);
