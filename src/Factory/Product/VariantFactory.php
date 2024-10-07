@@ -122,7 +122,10 @@ class VariantFactory implements ProductVariantFactoryInterface
         $oneItemPriceWithoutDelivery = $configuredItem['Price']['ConvertedPriceList']['Internal']['Price'];
 
         $originalPrice = (int) $oneItemPriceWithoutDelivery * 100;
-        $price = $promotionPrice;        
+        $price = (int) ($oneItemPriceWithoutDelivery * 100);
+        if ($promotionPrice > 0) {
+            $price = $promotionPrice;
+        }
 
         $cp->setMinimumPrice(0);
         $cp->setOriginalPrice($originalPrice);      // Үндсэн үнэ
