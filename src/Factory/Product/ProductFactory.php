@@ -49,6 +49,9 @@ class ProductFactory implements ProductFactoryInterface
         $product->setWebUrl($itemInfo['ExternalItemUrl']);
         $product->setImageUrl($itemInfo['MainPictureUrl']);
         $product->setProviderType($itemInfo['ProviderType']);
+        if (in_array('Tmall', $itemInfo['Features'])) {
+            $product->setTmall(true);
+        }
 
         $configuredItem = $this->otResponse->findConfiguredItem($itemInfo['ConfiguredItems'], $params['configuredItemId']);
         if ($configuredItem === null) {
@@ -92,6 +95,9 @@ class ProductFactory implements ProductFactoryInterface
         $product->setWebUrl($itemInfo['ExternalItemUrl']);
         $product->setImageUrl($itemInfo['MainPictureUrl']);
         $product->setProviderType($itemInfo['ProviderType']);
+        if (in_array('Tmall', $itemInfo['Features'])) {
+            $product->setTmall(true);
+        }
 
         $this->entityManager->persist($product);
         $this->entityManager->flush();
