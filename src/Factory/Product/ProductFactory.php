@@ -49,7 +49,7 @@ class ProductFactory implements ProductFactoryInterface
         $product->setWebUrl($itemInfo['ExternalItemUrl']);
         $product->setImageUrl($itemInfo['MainPictureUrl']);
         $product->setProviderType($itemInfo['ProviderType']);
-        if (in_array('Tmall', $itemInfo['Features'])) {
+        if (array_key_exists('Features', $itemInfo) && in_array('Tmall', $itemInfo['Features'])) {
             $product->setTmall(true);
         }
 
@@ -63,7 +63,7 @@ class ProductFactory implements ProductFactoryInterface
         
         // Tmall baraa bwal
         $promotionPrice = 0;
-        if (!in_array('Tmall', $itemInfo['Features'])) {
+        if (array_key_exists('Features', $itemInfo) && !in_array('Tmall', $itemInfo['Features'])) {
             $promotionPrice = $this->otResponse->findMinPromotionPrice($itemInfo, $configuredItem);
         }
 
@@ -95,7 +95,7 @@ class ProductFactory implements ProductFactoryInterface
         $product->setWebUrl($itemInfo['ExternalItemUrl']);
         $product->setImageUrl($itemInfo['MainPictureUrl']);
         $product->setProviderType($itemInfo['ProviderType']);
-        if (in_array('Tmall', $itemInfo['Features'])) {
+        if (array_key_exists('Features', $itemInfo) && in_array('Tmall', $itemInfo['Features'])) {
             $product->setTmall(true);
         }
 
