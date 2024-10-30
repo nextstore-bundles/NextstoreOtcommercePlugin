@@ -48,7 +48,9 @@ class VariantFactory implements ProductVariantFactoryInterface
         }
         // Tmall baraa bwal
         $promotionPrice = 0;
-        if (array_key_exists('Features', $itemInfo) && !in_array('Tmall', $itemInfo['Features'])) {
+        if (array_key_exists('Features', $itemInfo) && in_array('Tmall', $itemInfo['Features'])) {
+            // nothing
+        } else {
             $promotionPrice = $this->otResponse->findMinPromotionPrice($itemInfo, $configuredItem);
         }
 
@@ -80,7 +82,9 @@ class VariantFactory implements ProductVariantFactoryInterface
         }
         // Tmall baraa bwal
         $promotionPrice = 0;
-        if (array_key_exists('Features', $itemInfo) && !in_array('Tmall', $itemInfo['Features'])) {
+        if (array_key_exists('Features', $itemInfo) && in_array('Tmall', $itemInfo['Features'])) {
+            // nothing
+        } else {
             $promotionPrice = $this->otResponse->findMinPromotionPrice($itemInfo, $configuredItem);
         }
 
