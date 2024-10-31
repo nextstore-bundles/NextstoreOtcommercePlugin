@@ -602,4 +602,9 @@ class OtService
             return $e->getMessage();
         }
     }
+
+    public function setLanguage($language)
+    {
+        OtApi::setLang($language);
+    }
 }
