@@ -57,7 +57,8 @@ class OtApi
             } catch (JsonException $e) {
                 throw new Exception('request decode error');
             }
-            throw new Exception($decoded['ErrorCode'].': '.$decoded['ErrorDescription']);
+            throw new Exception('app.error.ot_general');
+            // throw new Exception($decoded['ErrorCode'].': '.$decoded['ErrorDescription']);
         }
 
         return $answer;
