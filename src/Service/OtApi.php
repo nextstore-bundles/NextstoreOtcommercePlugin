@@ -57,7 +57,13 @@ class OtApi
             } catch (JsonException $e) {
                 throw new Exception('request decode error');
             }
-            throw new Exception('app.error.ot_general');
+            if (self::$lang == 'kk') {
+                throw new Exception('Кешіріңіз, бұл өнім жойылған, қоймада жоқ немесе сатылуға қолжетімсіз.');
+            } else if (self::$lang == 'ru') {
+                throw new Exception('Извините, этот товар удален, отсутствует на складе или не может быть продан.');
+            } else {
+                throw new Exception('Sorry, this product has been removed, is out of stock, or cannot be sold.');
+            }
             // throw new Exception($decoded['ErrorCode'].': '.$decoded['ErrorDescription']);
         }
 
