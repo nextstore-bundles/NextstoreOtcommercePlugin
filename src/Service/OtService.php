@@ -603,8 +603,8 @@ class OtService
         }
     }
 
-    public function setLanguage($language)
+    public function setLocaleCode($localeCode)
     {
-        OtApi::setLang($language);
+        OtApi::setLocaleCode($localeCode);
     }
 }

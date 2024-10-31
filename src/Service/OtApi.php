@@ -30,6 +30,8 @@ class OtApi
     /*** @var Client|null */
     private static ?Client $client = null;
 
+    private static $localeCode;
+
     /**
      * @return resource|string
      *
@@ -57,9 +59,9 @@ class OtApi
             } catch (JsonException $e) {
                 throw new Exception('request decode error');
             }
-            if (self::$lang == 'kk') {
+            if (self::getLocaleCode() == 'kk') {
                 throw new Exception('Кешіріңіз, бұл өнім жойылған, қоймада жоқ немесе сатылуға қолжетімсіз.');
-            } else if (self::$lang == 'ru') {
+            } else if (self::getLocaleCode() == 'ru') {
                 throw new Exception('Извините, этот товар удален, отсутствует на складе или не может быть продан.');
             } else {
                 throw new Exception('Sorry, this product has been removed, is out of stock, or cannot be sold.');
@@ -166,5 +168,19 @@ class OtApi
             throw new Exception('Wrong OTAPI language');
         }
         self::$lang = $lang;
+    }
+
+    /*** @return string */
+    private static function getLocaleCode(): string
+    {
+        return self::$localeCode;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function setLocaleCode(string $localeCode): void
+    {
+        self::$localeCode = $localeCode;
     }
 }
