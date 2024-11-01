@@ -53,21 +53,22 @@ class OtApi
         }
         $answer = (string) $response->getBody();
         // to not decode to prevent memory overuse
-        if (!str_starts_with($answer, '{"ErrorCode":"Ok"') && str_starts_with($answer, '{"ErrorCode":')) {
-            try {
-                $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
-            } catch (JsonException $e) {
-                throw new Exception('request decode error');
-            }
-            if (self::getLocaleCode() == 'kk') {
-                throw new Exception('Кешіріңіз, бұл өнім жойылған, қоймада жоқ немесе сатылуға қолжетімсіз.');
-            } else if (self::getLocaleCode() == 'ru') {
-                throw new Exception('Извините, этот товар удален, отсутствует на складе или не может быть продан.');
-            } else {
-                throw new Exception('Sorry, this product has been removed, is out of stock, or cannot be sold.');
-            }
-            // throw new Exception($decoded['ErrorCode'].': '.$decoded['ErrorDescription']);
-        }
+        // if (!str_starts_with($answer, '{"ErrorCode":"Ok"') && str_starts_with($answer, '{"ErrorCode":')) {
+        //     try {
+        //         $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+        //     } catch (JsonException $e) {
+        //         throw new Exception('request decode error');
+        //     }
+        //     // if (self::getLocaleCode() == 'kk') {
+        //     //     throw new Exception('Кешіріңіз, бұл өнім жойылған, қоймада жоқ немесе сатылуға қолжетімсіз.');
+        //     // } else if (self::getLocaleCode() == 'ru') {
+        //     //     throw new Exception('Извините, этот товар удален, отсутствует на складе или не может быть продан.');
+        //     // } else {
+        //     //     throw new Exception('Sorry, this product has been removed, is out of stock, or cannot be sold.');
+        //     // }
+        //     return $decoded;
+        //     // throw new Exception($decoded['ErrorCode'].': '.$decoded['ErrorDescription']);
+        // }
 
         return $answer;
     }
@@ -171,7 +172,7 @@ class OtApi
     }
 
     /*** @return string */
-    private static function getLocaleCode(): string
+    public static function getLocaleCode(): string
     {
         return self::$localeCode;
     }

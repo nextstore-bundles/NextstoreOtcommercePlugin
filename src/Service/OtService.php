@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Nextstore\SyliusOtcommercePlugin\Service;
 
 use Exception;
+use JsonException;
 use Nextstore\SyliusOtcommercePlugin\Model\CurrencyRateHistoryGetParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\OrderAddDataXmlParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\OtParameters;
@@ -23,6 +24,7 @@ class OtService
         OtApi::setLang($this->parameterBag->get('ot_lang'));
     }
 
+    // Called from Admin & Front
     public function getItemFullInfo(array $params)
     {
         try {
@@ -32,35 +34,26 @@ class OtService
                 OtApi::setLang($params['language']);
             }
 
-            $item = Otapi::request('GetItemFullInfo', $otParameters);
-            
-            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('GetItemFullInfo', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
 
-            return $decoded;
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
-    public function getItemInfoList(array $params)
-    {
-        try {
-            $otParameters = new OtParameters();
-            $otParameters->setIdsList($params['idsList']);
-            if (array_key_exists('language', $params)) {
-                OtApi::setLang($params['language']);
+            if ($decoded['ErrorCode'] != "Ok") {
+                if (OtApi::getLocaleCode() == 'kk') {
+                    throw new Exception('Кешіріңіз, бұл өнім жойылған, қоймада жоқ немесе сатылуға қолжетімсіз.');
+                } else if (OtApi::getLocaleCode() == 'ru') {
+                    throw new Exception('Извините, этот товар удален, отсутствует на складе или не может быть продан.');
+                } else {
+                    throw new Exception('Sorry, this product has been removed, is out of stock, or cannot be sold.');
+                }
             }
 
-            $item = Otapi::request('GetItemInfoList', $otParameters);
-            
-            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
-
             return $decoded;
         } catch (Exception $e) {
             return $e->getMessage();
         }
     }
 
+    // Called from command
     public function getItemPrice(array $params)
     {
         try {
@@ -72,10 +65,14 @@ class OtService
             if (array_key_exists('language', $params)) {
                 OtApi::setLang($params['language']);
             }
+            OtApi::setLang(OtApi::getLocaleCode());
 
-            $item = Otapi::request('GetItemPrice', $otParameters);
-            
-            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('GetItemPrice', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -83,6 +80,7 @@ class OtService
         }
     }
 
+    // Called from Front, command, and Admin
     public function authenticate(array $params = [])
     {
         try {
@@ -94,9 +92,14 @@ class OtService
                 $otParameters->setUserPassword($params['userPassword']);
             }
             $otParameters->setRememberMe(true);
+            OtApi::setLang(OtApi::getLocaleCode());
 
-            $res = Otapi::request('Authenticate', $otParameters);
-            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('Authenticate', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -104,6 +107,7 @@ class OtService
         }
     }
 
+    // Called from command
     public function authenticateAsUser(array $params)
     {
         try {
@@ -113,9 +117,14 @@ class OtService
             if (array_key_exists('userLogin', $params)) {
                 $otParameters->setUserLogin($params['userLogin']);
             }
+            OtApi::setLang(OtApi::getLocaleCode());
 
-            $res = Otapi::request('AuthenticateAsUser', $otParameters);
-            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('AuthenticateAsUser', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -123,15 +132,21 @@ class OtService
         }
     }
 
+    // Called from Admin & Front
     public function authenticateInstanceOperator()
     {
         try {
             $otParameters = new OtParameters();
             $otParameters->setUserLogin($this->parameterBag->get('ot_user_login'));
             $otParameters->setUserPassword($this->parameterBag->get('ot_user_password'));
+            OtApi::setLang(OtApi::getLocaleCode());
 
-            $res = Otapi::request('AuthenticateInstanceOperator', $otParameters);
-            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('AuthenticateInstanceOperator', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -139,14 +154,19 @@ class OtService
         }
     }
 
+    // Called from Front
     public function getUserProfileInfoList(array $params = [])
     {
         try {
             $otParameters = new OtParameters();
             $otParameters->setSessionId($params['sessionId']);
+            OtApi::setLang(OtApi::getLocaleCode());
 
-            $res = Otapi::request('GetUserProfileInfoList', $otParameters);
-            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('GetUserProfileInfoList', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -154,11 +174,13 @@ class OtService
         }
     }
 
+    // Called from Front
     public function addUser($sessionId, array $params)
     {
         try {
             $otParameters = new OtParameters();
             $otParameters->setSessionId($sessionId);
+            OtApi::setLang(OtApi::getLocaleCode());
 
             $userUpdateDataXmlParameters = new UserUpdateDataXmlParameters();
             if (array_key_exists('id', $params) && null !== $params) $userUpdateDataXmlParameters->setId((int) $params['id']);
@@ -182,8 +204,11 @@ class OtService
             if (array_key_exists('phone', $params) && null !== $params) $userUpdateDataXmlParameters->setPhone((string) $params['phone']);
             if (array_key_exists('skype', $params) && null !== $params) $userUpdateDataXmlParameters->setSkype((string) $params['skype']);
 
-            $res = Otapi::request('AddUser', $otParameters, null, $userUpdateDataXmlParameters);
-            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('AddUser', $otParameters, null, $userUpdateDataXmlParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -191,11 +216,13 @@ class OtService
         }
     }
 
+    // Called from Front
     public function addOrder(array $params)
     {
         try {
             $otParameters = new OtParameters();
             $otParameters->setSessionId($params['sessionId']);
+            OtApi::setLang(OtApi::getLocaleCode());
 
             $orderAddDataXmlParameters = new OrderAddDataXmlParameters();
             if (array_key_exists('deliveryModeId', $params) && null !== $params) $orderAddDataXmlParameters->setDeliveryModeId((string) $params['deliveryModeId']);
@@ -203,9 +230,11 @@ class OtService
             if (array_key_exists('userProfileId', $params) && null !== $params) $orderAddDataXmlParameters->setUserProfileId((int) $params['userProfileId']);
             if (array_key_exists('items', $params) && null !== $params) $orderAddDataXmlParameters->setItems($params['items']);
 
-            $order = Otapi::request('AddOrder', $otParameters, null, null, $orderAddDataXmlParameters);
-            
-            $decoded = json_decode($order, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('AddOrder', $otParameters, null, null, $orderAddDataXmlParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -214,6 +243,7 @@ class OtService
     }
 
     // Deposit funds to customer account
+    // Called from Front
     public function postTransaction(array $params)
     {
         try {
@@ -224,10 +254,13 @@ class OtService
             $otParameters->setComment($params['comment']);
             $otParameters->setIsDebit($params['isDebit']);
             $otParameters->setTransactionDate($params['transactionDate']);
+            OtApi::setLang(OtApi::getLocaleCode());
 
-            $transaction = Otapi::request('PostTransaction', $otParameters);
-            
-            $decoded = json_decode($transaction, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('PostTransaction', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -235,6 +268,7 @@ class OtService
         }
     }
 
+    // Called from Front
     public function paymentPersonalAccount(array $params)
     {
         try {
@@ -242,10 +276,13 @@ class OtService
             $otParameters->setSessionId($params['sessionId']);
             $otParameters->setAmount($params['amount']);
             $otParameters->setSalesId($params['salesId']);
+            OtApi::setLang(OtApi::getLocaleCode());
 
-            $res = Otapi::request('PaymentPersonalAccount', $otParameters);
-            
-            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('PaymentPersonalAccount', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -253,6 +290,7 @@ class OtService
         }
     }
 
+    // Called from Admin Order
     public function getProviderOrdersIntegrationSessionAuthenticationInfo(array $params)
     {
         try {
@@ -260,10 +298,13 @@ class OtService
             $otParameters->setSessionId($params['sessionId']);
             $otParameters->setProviderType($params['providerType']);
             $otParameters->setReturnUrl($params['returnUrl']);
+            OtApi::setLang('en');
 
-            $res = Otapi::request('GetProviderOrdersIntegrationSessionAuthenticationInfo', $otParameters);
-            
-            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('GetProviderOrdersIntegrationSessionAuthenticationInfo', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -271,16 +312,20 @@ class OtService
         }
     }
 
+    // Called from command & service
     public function getProviderOrdersIntegrationSessionInfoList(array $params)
     {
         try {
             $otParameters = new OtParameters();
             $otParameters->setSessionId($params['sessionId']);
             $otParameters->setProviderType($params['providerType']);
+            OtApi::setLang(OtApi::getLocaleCode());
 
-            $res = Otapi::request('GetProviderOrdersIntegrationSessionInfoList', $otParameters);
-            
-            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('GetProviderOrdersIntegrationSessionInfoList', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -288,6 +333,7 @@ class OtService
         }
     }
 
+    // Called from Front
     public function runOrderExportingToProvider(array $params)
     {
         try {
@@ -298,15 +344,18 @@ class OtService
 
             $runOrderXmlParameters = new RunOrderExportingToProviderXmlParameters();
             $runOrderXmlParameters->setOrderId($params['orderId']);
+            OtApi::setLang(OtApi::getLocaleCode());
 
             $xmlParameters = new OtXmlParameters();
             $xmlParameters->setFieldName('xmlParameters');
             $xmlParameters->setType('Parameters');
             $xmlParameters->setXmlData($runOrderXmlParameters->createXmlParameters());
 
-            $res = Otapi::request('RunOrderExportingToProvider', $otParameters, $xmlParameters);
-            
-            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('RunOrderExportingToProvider', $otParameters, $xmlParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -314,6 +363,7 @@ class OtService
         }
     }
 
+    // Called from command
     public function runOrdersSynchronizingWithProvider(array $params)
     {
         try {
@@ -321,6 +371,7 @@ class OtService
             $otParameters->setSessionId($params['sessionId']);
             $otParameters->setProviderType($params['providerType']);
             $otParameters->setProviderSessionId($params['providerSessionId']);
+            OtApi::setLang(OtApi::getLocaleCode());
 
             $runOrderXmlParameters = new RunOrderExportingToProviderXmlParameters();
             $runOrderXmlParameters->setOrderIds($params['orderIds']);
@@ -330,9 +381,11 @@ class OtService
             $xmlParameters->setType('Parameters');
             $xmlParameters->setXmlData($runOrderXmlParameters->createXmlParameters());
 
-            $res = Otapi::request('RunOrdersSynchronizingWithProvider', $otParameters, $xmlParameters);
-            
-            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('RunOrdersSynchronizingWithProvider', $otParameters, $xmlParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -340,15 +393,19 @@ class OtService
         }
     }
 
+    // Called from Front
     public function getVendorInfo(array $params)
     {
         try {
             $otParameters = new OtParameters();
             $otParameters->setVendorId($params['vendorId']);
+            OtApi::setLang(OtApi::getLocaleCode());
 
-            $item = Otapi::request('GetVendorInfo', $otParameters);
-            
-            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('GetVendorInfo', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -356,16 +413,20 @@ class OtService
         }
     }
 
+    // Called from command
     public function getSalesOrderDetails(array $params)
     {
         try {
             $otParameters = new OtParameters();
             $otParameters->setSessionId($params['sessionId']);
             $otParameters->setSalesId($params['salesId']);
+            OtApi::setLang(OtApi::getLocaleCode());
 
-            $res = Otapi::request('GetSalesOrderDetails', $otParameters);
-            
-            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('GetSalesOrderDetails', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -373,6 +434,7 @@ class OtService
         }
     }
 
+    // Called from command
     public function getCurrencyRateHistory(array $params)
     {
         try {
@@ -389,56 +451,22 @@ class OtService
             $xmlParameters->setFieldName('xmlParameters');
             $xmlParameters->setType('CurrencyRateHistoryGetParameters');
             $xmlParameters->setXmlData($currencyRateHistoryGetParameters->createXmlParameters());
+            OtApi::setLang('en');
 
-            $res = Otapi::request('GetCurrencyRateHistory', $otParameters, $xmlParameters);
-            
-            $decoded = json_decode($res, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('GetCurrencyRateHistory', $otParameters, $xmlParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
 
-            return $decoded;
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
-    public function getBasket(array $params)
-    {
-        try {
-            $otParameters = new OtParameters();
-            $otParameters->setSessionId($params['sessionId']);
-            if (array_key_exists('language', $params)) {
-                OtApi::setLang($params['language']);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
             }
 
-            $item = Otapi::request('GetBasket', $otParameters);
-            
-            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
-
             return $decoded;
         } catch (Exception $e) {
             return $e->getMessage();
         }
     }
 
-    public function getPartialBasket(array $params)
-    {
-        try {
-            $otParameters = new OtParameters();
-            $otParameters->setSessionId($params['sessionId']);
-            $otParameters->setElements($params['elements']);
-            if (array_key_exists('language', $params)) {
-                OtApi::setLang($params['language']);
-            }
-
-            $item = Otapi::request('GetPartialBasket', $otParameters);
-            
-            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
-
-            return $decoded;
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
+    // Called from Front
     public function clearBasket(array $params)
     {
         try {
@@ -447,10 +475,13 @@ class OtService
             if (array_key_exists('language', $params)) {
                 OtApi::setLang($params['language']);
             }
+            OtApi::setLang(OtApi::getLocaleCode());
 
-            $item = Otapi::request('ClearBasket', $otParameters);
-            
-            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('ClearBasket', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -458,6 +489,7 @@ class OtService
         }
     }
 
+    // Called from FRONT
     public function addItemToBasket(array $params)
     {
         try {
@@ -471,98 +503,25 @@ class OtService
                 OtApi::setLang($params['language']);
             }
 
-            $item = Otapi::request('AddItemToBasket', $otParameters);
-            
-            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
-
-            return $decoded;
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
-    public function editBasketItemQuantity(array $params)
-    {
-        try {
-            $otParameters = new OtParameters();
-            $otParameters->setSessionId($params['sessionId']);
-            $otParameters->setElementId($params['elementId']);
-            $otParameters->setQuantity($params['quantity']);
-            $otParameters->setFieldParameters($params['fieldParameters']);
-            if (array_key_exists('language', $params)) {
-                OtApi::setLang($params['language']);
+            $answer = Otapi::request('AddItemToBasket', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                if (OtApi::getLocaleCode() == 'kk') {
+                    throw new Exception('Кешіріңіз, бұл өнім жойылған, қоймада жоқ немесе сатылуға қолжетімсіз.');
+                } else if (OtApi::getLocaleCode() == 'ru') {
+                    throw new Exception('Извините, этот товар удален, отсутствует на складе или не может быть продан.');
+                } else {
+                    throw new Exception('Sorry, this product has been removed, is out of stock, or cannot be sold.');
+                }
             }
 
-            $item = Otapi::request('EditBasketItemQuantity', $otParameters);
-            
-            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
-
             return $decoded;
         } catch (Exception $e) {
             return $e->getMessage();
         }
     }
 
-    public function batchSimplifiedAddItemsToBasket(array $params)
-    {
-        try {
-            $otParameters = new OtParameters();
-            $otParameters->setSessionId($params['sessionId']);
-            $otParameters->setItemId($params['itemId']);
-            if (array_key_exists('language', $params)) {
-                OtApi::setLang($params['language']);
-            }
-
-            $item = Otapi::request('BatchSimplifiedAddItemsToBasket', $otParameters);
-            
-            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
-
-            return $decoded;
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
-    public function removeItemFromBasket(array $params)
-    {
-        try {
-            $otParameters = new OtParameters();
-            $otParameters->setSessionId($params['sessionId']);
-            $otParameters->setElementId($params['elementId']);
-            if (array_key_exists('language', $params)) {
-                OtApi::setLang($params['language']);
-            }
-
-            $item = Otapi::request('RemoveItemFromBasket', $otParameters);
-            
-            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
-
-            return $decoded;
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
-    public function removeItemsFromBasket(array $params)
-    {
-        try {
-            $otParameters = new OtParameters();
-            $otParameters->setSessionId($params['sessionId']);
-            $otParameters->setElements($params['elements']);
-            if (array_key_exists('language', $params)) {
-                OtApi::setLang($params['language']);
-            }
-
-            $item = Otapi::request('RemoveItemsFromBasket', $otParameters);
-            
-            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
-
-            return $decoded;
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
+    // Called from Front
     public function runBasketChecking(array $params)
     {
         try {
@@ -572,10 +531,13 @@ class OtService
             if (array_key_exists('language', $params)) {
                 OtApi::setLang($params['language']);
             }
+            OtApi::setLang(OtApi::getLocaleCode());
 
-            $item = Otapi::request('RunBasketChecking', $otParameters);
-            
-            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('RunBasketChecking', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
@@ -583,6 +545,7 @@ class OtService
         }
     }
 
+    // Called from Front
     public function getBasketCheckingResult(array $params)
     {
         try {
@@ -592,10 +555,13 @@ class OtService
             if (array_key_exists('language', $params)) {
                 OtApi::setLang($params['language']);
             }
+            OtApi::setLang(OtApi::getLocaleCode());
 
-            $item = Otapi::request('GetBasketCheckingResult', $otParameters);
-            
-            $decoded = json_decode($item, true, 512, JSON_THROW_ON_ERROR);
+            $answer = Otapi::request('GetBasketCheckingResult', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
 
             return $decoded;
         } catch (Exception $e) {
