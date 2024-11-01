@@ -31,7 +31,7 @@ class OtApi
     /*** @var Client|null */
     private static ?Client $client = null;
 
-    private static $localeCode;
+    private static $localeCode = 'en';
 
     /**
      * @return resource|string
