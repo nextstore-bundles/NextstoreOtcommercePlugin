@@ -8,6 +8,7 @@ use Exception;
 use JsonException;
 use Nextstore\SyliusOtcommercePlugin\Model\CurrencyRateHistoryGetParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\OrderAddDataXmlParameters;
+use Nextstore\SyliusOtcommercePlugin\Model\OrderCreateDataXmlParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\OtParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\OtXmlParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\RunOrderExportingToProviderXmlParameters;
@@ -572,5 +573,31 @@ class OtService
     public function setLocaleCode($localeCode)
     {
         OtApi::setLocaleCode($localeCode);
+    }
+
+    public function createOrder(array $params)
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            OtApi::setLang(OtApi::getLocaleCode());
+
+            $orderCreateDataXmlParameters = new OrderCreateDataXmlParameters();
+            if (array_key_exists('weight', $params) && null !== $params) $orderCreateDataXmlParameters->setWeight((float) $params['weight']);
+            if (array_key_exists('elements', $params) && null !== $params) $orderCreateDataXmlParameters->setElements($params['elements']);
+            if (array_key_exists('deliveryModeId', $params) && null !== $params) $orderCreateDataXmlParameters->setDeliveryModeId((string) $params['deliveryModeId']);
+            if (array_key_exists('comment', $params) && null !== $params) $orderCreateDataXmlParameters->setComment((string) $params['comment']);
+            if (array_key_exists('userProfileId', $params) && null !== $params) $orderCreateDataXmlParameters->setUserProfileId((int) $params['userProfileId']);
+
+            $answer = Otapi::request('CreateOrder', $otParameters, null, null, null, $orderCreateDataXmlParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
     }
 }

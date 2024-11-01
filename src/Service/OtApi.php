@@ -11,6 +11,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\StreamWrapper;
 use JsonException;
 use Nextstore\SyliusOtcommercePlugin\Model\OrderAddDataXmlParameters;
+use Nextstore\SyliusOtcommercePlugin\Model\OrderCreateDataXmlParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\OtParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\OtXmlParameters;
 use Nextstore\SyliusOtcommercePlugin\Model\UserUpdateDataXmlParameters;
@@ -37,9 +38,16 @@ class OtApi
      *
      * @throws Exception
      */
-    public static function request(string $method, OtParameters $params = null, ?OtXmlParameters $xmlParams = null, ?UserUpdateDataXmlParameters $userUpdateDataXmlParameters = null, ?OrderAddDataXmlParameters $orderAddDataXmlParameters = null, bool $returnAsStream = false)
-    {
-        $requestUrl = self::prepareRequest($method, $params, $xmlParams, $userUpdateDataXmlParameters, $orderAddDataXmlParameters);
+    public static function request(
+        string $method,
+        OtParameters $params = null,
+        ?OtXmlParameters $xmlParams = null,
+        ?UserUpdateDataXmlParameters $userUpdateDataXmlParameters = null,
+        ?OrderAddDataXmlParameters $orderAddDataXmlParameters = null,
+        ?OrderCreateDataXmlParameters $orderCreateDataXmlParameters = null,
+        bool $returnAsStream = false
+    ) {
+        $requestUrl = self::prepareRequest($method, $params, $xmlParams, $userUpdateDataXmlParameters, $orderAddDataXmlParameters, $orderCreateDataXmlParameters);
         
         // return $requestUrl;
         
@@ -76,8 +84,14 @@ class OtApi
     /**
      * @return array|null
      */
-    private static function prepareRequest(string $method, ?OtParameters $parameters = null, ?OtXmlParameters $xmlParams = null, ?UserUpdateDataXmlParameters $userUpdateDataXmlParameters = null, ?OrderAddDataXmlParameters $orderAddDataXmlParameters = null): string
-    {
+    private static function prepareRequest(
+        string $method,
+        ?OtParameters $parameters = null,
+        ?OtXmlParameters $xmlParams = null,
+        ?UserUpdateDataXmlParameters $userUpdateDataXmlParameters = null,
+        ?OrderAddDataXmlParameters $orderAddDataXmlParameters = null,
+        ?OrderCreateDataXmlParameters $orderCreateDataXmlParameters = null
+    ): string {
         $params = $parameters ? $parameters->getData() : [];
         self::createClient();
         if (null !== $xmlParams) {
@@ -90,6 +104,10 @@ class OtApi
 
         if (null !== $orderAddDataXmlParameters) {
             $params[$orderAddDataXmlParameters->getFieldName()] = $orderAddDataXmlParameters->createXmlParameters();
+        }
+
+        if (null !== $orderCreateDataXmlParameters) {
+            $params[$orderCreateDataXmlParameters->getFieldName()] = $orderCreateDataXmlParameters->createXmlParameters();
         }
         $params['instanceKey'] = self::getKey();
         $params['language'] = self::getLang();
