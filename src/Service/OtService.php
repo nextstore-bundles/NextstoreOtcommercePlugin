@@ -600,4 +600,23 @@ class OtService
             return $e->getMessage();
         }
     }
+
+    public function getBasket(array $params = [])
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            OtApi::setLang(OtApi::getLocaleCode());
+
+            $answer = Otapi::request('GetBasket', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
