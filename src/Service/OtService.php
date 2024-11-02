@@ -506,15 +506,15 @@ class OtService
 
             $answer = Otapi::request('AddItemToBasket', $otParameters);
             $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
-            if ($decoded['ErrorCode'] != "Ok") {
-                if (OtApi::getLocaleCode() == 'kk') {
-                    throw new Exception('Кешіріңіз, бұл өнім жойылған, қоймада жоқ немесе сатылуға қолжетімсіз.');
-                } else if (OtApi::getLocaleCode() == 'ru') {
-                    throw new Exception('Извините, этот товар удален, отсутствует на складе или не может быть продан.');
-                } else {
-                    throw new Exception('Sorry, this product has been removed, is out of stock, or cannot be sold.');
-                }
-            }
+            // if ($decoded['ErrorCode'] != "Ok") {
+            //     if (OtApi::getLocaleCode() == 'kk') {
+            //         throw new Exception('Кешіріңіз, бұл өнім жойылған, қоймада жоқ немесе сатылуға қолжетімсіз.');
+            //     } else if (OtApi::getLocaleCode() == 'ru') {
+            //         throw new Exception('Извините, этот товар удален, отсутствует на складе или не может быть продан.');
+            //     } else {
+            //         throw new Exception('Sorry, this product has been removed, is out of stock, or cannot be sold.');
+            //     }
+            // }
 
             return $decoded;
         } catch (Exception $e) {
