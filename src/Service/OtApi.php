@@ -27,7 +27,7 @@ class OtApi
     /*** @var string|null */
     private static ?string $secret = null;
     /*** @var string */
-    private static string $lang;
+    private static string $lang = 'en';
     /*** @var Client|null */
     private static ?Client $client = null;
 
