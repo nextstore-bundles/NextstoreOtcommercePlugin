@@ -21,13 +21,21 @@ class OtResponse
         $minPromotionPrice = $oneItemPriceWithoutDelivery;
         if (isset($itemInfo['Promotions'])) {
             foreach ($itemInfo['Promotions'] as $promotion) {
-                foreach ($promotion['ConfiguredItems'] as $promotionItem) {
-                    if ($promotionItem['Id'] === $configuredItem['Id']) {
-                        $promotionOneItemPriceWithoutDelivery = $promotionItem['Price']['ConvertedPriceList']['Internal']['Price'];
-                        $promotionPrice = $promotionOneItemPriceWithoutDelivery;
-                        if ($minPromotionPrice > $promotionPrice) {
-                            $minPromotionPrice = $promotionPrice;
+                if (array_key_exists('ConfiguredItems', $promotion)) {
+                    foreach ($promotion['ConfiguredItems'] as $promotionItem) {
+                        if ($promotionItem['Id'] === $configuredItem['Id']) {
+                            $promotionOneItemPriceWithoutDelivery = $promotionItem['Price']['ConvertedPriceList']['Internal']['Price'];
+                            $promotionPrice = $promotionOneItemPriceWithoutDelivery;
+                            if ($minPromotionPrice > $promotionPrice) {
+                                $minPromotionPrice = $promotionPrice;
+                            }
                         }
+                    }
+                } else {
+                    $promotionOneItemPriceWithoutDelivery = $promotion['Price']['ConvertedPriceList']['Internal']['Price'];
+                    $promotionPrice = $promotionOneItemPriceWithoutDelivery;
+                    if ($minPromotionPrice > $promotionPrice) {
+                        $minPromotionPrice = $promotionPrice;
                     }
                 }
             }
