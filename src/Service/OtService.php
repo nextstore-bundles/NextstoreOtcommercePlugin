@@ -619,4 +619,24 @@ class OtService
             return $e->getMessage();
         }
     }
+
+    public function removeItemsFromBasket(array $params = [])
+    {
+        try {
+            $otParameters = new OtParameters();
+            $otParameters->setSessionId($params['sessionId']);
+            $otParameters->setElements($params['elements']);
+            OtApi::setLang(OtApi::getLocaleCode());
+
+            $answer = Otapi::request('RemoveItemsFromBasket', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
