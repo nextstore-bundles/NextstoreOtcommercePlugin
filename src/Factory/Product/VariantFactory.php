@@ -144,11 +144,13 @@ class VariantFactory implements ProductVariantFactoryInterface
     {
         $translation = $variant->getTranslation($params['localeCode']);
         if ($translation->getLocale() === $params['localeCode']) {
-            $translation->setName($attributeInfo['value']);
+            $name = substr($attributeInfo['value'], 0, 250);
+            $translation->setName($name);
             $this->entityManager->persist($translation);
         } else {
+            $name = substr($attributeInfo['value'], 0, 250);
             $newTranslation = new ProductVariantTranslation();
-            $newTranslation->setName($attributeInfo['value']);
+            $newTranslation->setName($name);
             $newTranslation->setLocale($params['localeCode']);
             $this->entityManager->persist($newTranslation);
             $variant->addTranslation($newTranslation);
