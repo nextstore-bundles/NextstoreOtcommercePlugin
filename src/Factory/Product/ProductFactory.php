@@ -132,7 +132,7 @@ class ProductFactory implements ProductFactoryInterface
     private function modifyTranslation(ModelProductInterface|ProductVariantInterface $object, $params, $name, $slug = null)
     {
         $translation = $object->getTranslation($params['localeCode']);
-        $name = substr($name, 0, 250);
+        $name = mb_substr($name, 0, 250, 'utf-8');
         if ($object instanceof ModelProductInterface) {
             if ($translation->getLocale() === $params['localeCode']) {
                 $translation->setName($name);
