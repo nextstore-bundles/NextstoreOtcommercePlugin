@@ -639,4 +639,22 @@ class OtService
             return $e->getMessage();
         }
     }
+
+    public function getBrandInfoList()
+    {
+        try {
+            $otParameters = new OtParameters();
+            OtApi::setLang(OtApi::getLocaleCode());
+
+            $answer = Otapi::request('GetBrandInfoList', $otParameters);
+            $decoded = json_decode($answer, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded['ErrorCode'] != "Ok") {
+                throw new Exception($decoded['ErrorDescription']);
+            }
+
+            return $decoded;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
