@@ -56,7 +56,7 @@ class VariantFactory implements ProductVariantFactoryInterface
 
         /** @var ModelProductVariantInterface $variant */
         $variant = $this->createForProduct($product);
-        $variant->setCode($product->getCode().'_'.$configuredItem['Id']);
+        $variant->setCode($configuredItem['Id']);
         $this->modifyTranslation($variant, $params, $attributeInfo);
         $variant->setImageUrl($attributeInfo['imageUrl']);
 
