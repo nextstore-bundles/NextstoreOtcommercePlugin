@@ -103,7 +103,7 @@ class VariantFactory implements ProductVariantFactoryInterface
     {
         $oneItemPriceWithoutDelivery = $configuredItem['Price']['ConvertedPriceList']['Internal']['Price'];
 
-        $originalPrice = (int) $oneItemPriceWithoutDelivery * 100;
+        $originalPrice = (int) ($oneItemPriceWithoutDelivery * 100);
         $price = (int) ($oneItemPriceWithoutDelivery * 100);
         if ($promotionPrice > 0) {
             $price = $promotionPrice;
@@ -125,7 +125,7 @@ class VariantFactory implements ProductVariantFactoryInterface
     {
         $oneItemPriceWithoutDelivery = $configuredItem['Price']['ConvertedPriceList']['Internal']['Price'];
 
-        $originalPrice = (int) $oneItemPriceWithoutDelivery * 100;
+        $originalPrice = (int) ($oneItemPriceWithoutDelivery * 100);
         $price = (int) ($oneItemPriceWithoutDelivery * 100);
         if ($promotionPrice > 0) {
             $price = $promotionPrice;
